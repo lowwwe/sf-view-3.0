@@ -100,78 +100,39 @@ void Game::processKeys(const std::optional<sf::Event> t_event)
 /// </summary>
 void Game::checkKeyboardState()
 {
-	sf::Vector2f centre;
-	sf::Vector2f viewFinderLocation;
-	sf::Vector2f zoom;
-	float shiftScale = 1.0f;
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
 	{
 		m_DELETEexitGame = true; 
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift))
-	{
-		shiftScale = 10.0f;
-	}
-	shiftScale *= m_view.getSize().x / 800.0f;
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A))
 	{
-			centre = m_view.getCenter();
-			centre.x -= 1.0f *shiftScale;
-			m_view.setCenter(centre);
-			viewFinderLocation = m_viewFinder.getPosition();
-			viewFinderLocation.x -= 0.0577f * shiftScale;
-			m_viewFinder.setPosition(viewFinderLocation);
+		panX(-1.0f, -0.0577f);			
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D))
 	{
-		centre = m_view.getCenter();
-		centre.x += 1.0f * shiftScale;
-		m_view.setCenter(centre);
-		viewFinderLocation = m_viewFinder.getPosition();
-		viewFinderLocation.x += 0.0577f * shiftScale;
-		m_viewFinder.setPosition(viewFinderLocation);
+		panX(1.0f, 0.0577f);		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W))
 	{
-		centre = m_view.getCenter();
-		centre.y -= 1.0f * shiftScale;
-		m_view.setCenter(centre);
-		viewFinderLocation = m_viewFinder.getPosition();
-		viewFinderLocation.y -= 0.0633f * shiftScale;
-		m_viewFinder.setPosition(viewFinderLocation);
+		panY(-1.0f, -0.0633f);		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S))
 	{
-		centre = m_view.getCenter();
-		centre.y += 1.0f * shiftScale;
-		m_view.setCenter(centre);
-		viewFinderLocation = m_viewFinder.getPosition();
-		viewFinderLocation.y += 0.0633f * shiftScale;
-		m_viewFinder.setPosition(viewFinderLocation);
+		panY(1.0f, 0.0633f);		
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Add))
 	{
-		zoom = m_view.getSize();
-		zoom *= 0.99f;
-		m_view.setSize(zoom);
-		zoom = m_viewFinder.getSize();
-		zoom *= 0.99f;
-		m_viewFinder.setSize(zoom);
+		zoom(0.99f);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Subtract))
 	{
-		zoom = m_view.getSize();
-		zoom *= 1.01f;
-		m_view.setSize(zoom);
-		zoom = m_viewFinder.getSize();
-		zoom *= 1.01f;
-		m_viewFinder.setSize(zoom);
-	
+		zoom(1.01f);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::R))
 	{		
-		m_view.setSize(sf::Vector2f{ 800.0f,480.0f });
-		m_viewFinder.setSize(sf::Vector2f{ 46.1f,30.0f });
+		zoomReset();		
 	}
 
 }
@@ -264,6 +225,65 @@ void Game::setupSprites()
 	m_view.setCenter(sf::Vector2f{ 400.0f, 240.0f });
 	m_view.setSize(sf::Vector2f{800.0f, 480.0f}); // 80% of 600 Height
 	m_view.setViewport(sf::FloatRect{ sf::Vector2f{0.0f,0.0f}, sf::Vector2f{1.0f,0.8f} }); // use top 80% of screen
+}
+
+void Game::panX(float t_mapScale, float t_viewScale)
+{
+	sf::Vector2f centre;
+	sf::Vector2f viewFinderLocation;
+	float shiftScale = 1.0f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift))
+	{
+		shiftScale = 10.0f;
+	}
+	shiftScale *= m_view.getSize().x / 800.0f;
+	centre = m_view.getCenter();
+	if ((centre.x < 3470.0f && t_mapScale > 0.0f) || (centre.x > 400.0f && t_mapScale < 0.0f ))
+	{
+		centre.x += t_mapScale * shiftScale;
+		m_view.setCenter(centre);
+		viewFinderLocation = m_viewFinder.getPosition();
+		viewFinderLocation.x += t_viewScale * shiftScale;
+		m_viewFinder.setPosition(viewFinderLocation);
+	}
+}
+
+void Game::panY(float t_mapScale, float t_viewScale)
+{
+	sf::Vector2f centre;
+	sf::Vector2f viewFinderLocation;
+	float shiftScale = 1.0f;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::RShift))
+	{
+		shiftScale = 10.0f;
+	}
+	shiftScale *= m_view.getSize().x / 800.0f;
+	centre = m_view.getCenter();
+	if ((centre.y < 1655.0f && t_mapScale > 0.0f) || (centre.y > 240.0f && t_mapScale < 0.0f))
+	{
+		centre.y += t_mapScale * shiftScale;
+		m_view.setCenter(centre);
+		viewFinderLocation = m_viewFinder.getPosition();
+		viewFinderLocation.y += t_viewScale * shiftScale;
+		m_viewFinder.setPosition(viewFinderLocation);
+	}
+}
+
+void Game::zoom(float t_scale)
+{
+	sf::Vector2f size;
+	size = m_view.getSize();
+	size *= t_scale;
+	m_view.setSize(size);
+	size = m_viewFinder.getSize();
+	size *= t_scale;
+	m_viewFinder.setSize(size);
+}
+
+void Game::zoomReset()
+{
+	m_view.setSize(sf::Vector2f{ 800.0f,480.0f });
+	m_viewFinder.setSize(sf::Vector2f{ 46.1f,30.0f });
 }
 
 

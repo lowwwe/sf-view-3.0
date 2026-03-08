@@ -43,6 +43,10 @@ private:
 	
 	void setupTexts();
 	void setupSprites();
+	void panX(float t_mapScale, float t_viewScale);
+	void panY(float t_mapScale, float t_viewScale);
+	void zoom(float t_scale);
+	void zoomReset();
 
 
 	
