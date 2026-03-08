@@ -38,7 +38,7 @@ private:
 	void processEvents();
 	void processKeys(const std::optional<sf::Event> t_event);
 	void checkKeyboardState();
-	void update(sf::Time t_deltaTime);
+	void update();
 	void render();
 	
 	void setupTexts();

@@ -1,6 +1,6 @@
 /// <summary>
-/// author Pete Lowe May 2025
-/// you need to change the above line or lose marks
+/// author Pete Lowe March 2026
+/// find wally he's near TCD
 /// </summary>
 
 
@@ -55,7 +55,7 @@ void Game::run()
 		{
 			timeSinceLastUpdate -= timePerFrame;
 			processEvents(); // at least 60 fps
-			update(timePerFrame); //60 fps
+			update(); //60 fps
 		}
 		render(); // as many as possible
 	}
@@ -141,7 +141,7 @@ void Game::checkKeyboardState()
 /// Update the game world
 /// </summary>
 /// <param name="t_deltaTime">time interval per frame</param>
-void Game::update(sf::Time t_deltaTime)
+void Game::update()
 {
 	checkKeyboardState();
 	if (m_DELETEexitGame)
@@ -227,6 +227,14 @@ void Game::setupSprites()
 	m_view.setViewport(sf::FloatRect{ sf::Vector2f{0.0f,0.0f}, sf::Vector2f{1.0f,0.8f} }); // use top 80% of screen
 }
 
+
+/// <summary>
+/// move on x axis
+/// move the view up or down the city is always draw at the same location
+/// they will get get out of sync zooming in and out and moving
+/// </summary>
+/// <param name="t_mapScale">factor for moving the city view</param>
+/// <param name="t_viewScale">factor for moving the viewfinder rectangle</param>
 void Game::panX(float t_mapScale, float t_viewScale)
 {
 	sf::Vector2f centre;
@@ -248,6 +256,16 @@ void Game::panX(float t_mapScale, float t_viewScale)
 	}
 }
 
+
+
+
+/// <summary>
+/// move on y axis
+/// move the view up or down the city is always draw at the same location
+/// they will get get out of sync zooming in and out and moving
+/// </summary>
+/// <param name="t_mapScale">factor for moving the city view</param>
+/// <param name="t_viewScale">factor for moving the viewfinder rectangle</param>
 void Game::panY(float t_mapScale, float t_viewScale)
 {
 	sf::Vector2f centre;
@@ -269,6 +287,11 @@ void Game::panY(float t_mapScale, float t_viewScale)
 	}
 }
 
+
+/// <summary>
+/// Change the ratio from the source sprite toi the screen render
+/// </summary>
+/// <param name="t_scale">Zoom adjestment amount</param>
 void Game::zoom(float t_scale)
 {
 	sf::Vector2f size;
@@ -280,6 +303,11 @@ void Game::zoom(float t_scale)
 	m_viewFinder.setSize(size);
 }
 
+
+/// <summary>
+/// Reset the view and rectangle shape to their defaul size
+// and a 1:1 scaling ratio for best image quality
+/// </summary>
 void Game::zoomReset()
 {
 	m_view.setSize(sf::Vector2f{ 800.0f,480.0f });
